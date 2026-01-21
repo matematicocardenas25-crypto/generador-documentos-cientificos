@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.env
+
+# Archivos temporales
+temp/
+uploads/
+*.tmp
+*.temp
+*.log
+
+# Documentos generados
+*.docx
+*.tex
+*.pdf
+
+# Sistema
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo

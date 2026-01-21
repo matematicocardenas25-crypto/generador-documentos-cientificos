@@ -1,0 +1,1368 @@
+<!DOCTYPE html>
+<html class="light" lang="es">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Plataforma de Generación Científica Avanzada - Ismael Cárdenas</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+    
+    <!-- MathJax para ecuaciones LaTeX -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#1e3a8a",
+                        "secondary": "#334155",
+                        "ai-accent": "#4f46e5",
+                        "success-bright": "#10b981",
+                        "background-light": "#f8fafc",
+                        "border-light": "#e2e8f0",
+                        "math-blue": "#2563eb",
+                        "theorem-green": "#059669",
+                        "definition-purple": "#7c3aed",
+                        "example-yellow": "#d97706",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"],
+                        "serif": ["Libre Baskerville", "serif"],
+                        "math": ["Cambria Math", "Latin Modern Math", "serif"]
+                    },
+                    borderRadius: {
+                        "lg": "0.75rem",
+                        "xl": "1rem",
+                        "2xl": "1.5rem"
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-in-out',
+                        'slide-up': 'slideUp 0.3s ease-out',
+                        'pulse-subtle': 'pulseSubtle 2s infinite',
+                    }
+                },
+            },
+        }
+    </script>
+    
+    <style type="text/tailwindcss">
+        @layer utilities {
+            @keyframes fadeIn {
+                from { opacity: 0; }
+                to { opacity: 1; }
+            }
+            
+            @keyframes slideUp {
+                from { transform: translateY(10px); opacity: 0; }
+                to { transform: translateY(0); opacity: 1; }
+            }
+            
+            @keyframes pulseSubtle {
+                0%, 100% { opacity: 1; }
+                50% { opacity: 0.8; }
+            }
+            
+            .custom-scrollbar::-webkit-scrollbar {
+                width: 8px;
+                height: 8px;
+            }
+            
+            .custom-scrollbar::-webkit-scrollbar-track {
+                background: #f1f5f9;
+                border-radius: 10px;
+            }
+            
+            .custom-scrollbar::-webkit-scrollbar-thumb {
+                background: #cbd5e1;
+                border-radius: 10px;
+            }
+            
+            .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+                background: #94a3b8;
+            }
+            
+            .math-equation {
+                font-family: 'Cambria Math', 'Latin Modern Math', serif;
+            }
+            
+            .theorem-box {
+                border-left: 4px solid #059669;
+                background: linear-gradient(90deg, #f0fdf4 0%, #dcfce7 100%);
+            }
+            
+            .definition-box {
+                border-left: 4px solid #7c3aed;
+                background: linear-gradient(90deg, #f5f3ff 0%, #ede9fe 100%);
+            }
+            
+            .example-box {
+                border-left: 4px solid #d97706;
+                background: linear-gradient(90deg, #fef3c7 0%, #fde68a 100%);
+            }
+            
+            .proof-box {
+                border-left: 4px solid #0ea5e9;
+                background: linear-gradient(90deg, #f0f9ff 0%, #e0f2fe 100%);
+            }
+            
+            .latex-preview {
+                min-height: 500px;
+                transition: all 0.3s ease;
+            }
+            
+            .page-break {
+                page-break-after: always;
+                break-after: page;
+                margin-top: 2rem;
+                margin-bottom: 2rem;
+                border-top: 2px dashed #e2e8f0;
+            }
+            
+            .shadow-soft {
+                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            }
+            
+            .shadow-hard {
+                box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.08), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
+            }
+        }
+        
+        body {
+            font-family: 'Manrope', sans-serif;
+            overflow: hidden;
+        }
+        
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        
+        .academic-preview {
+            font-family: 'Libre Baskerville', serif;
+            line-height: 1.8;
+        }
+        
+        /* Estilos para ecuaciones LaTeX */
+        mjx-container {
+            margin: 1em 0 !important;
+        }
+        
+        .latex-inline {
+            display: inline-block;
+            padding: 0.1em 0.4em;
+            background: #f8fafc;
+            border-radius: 4px;
+            font-family: 'Cambria Math', serif;
+        }
+        
+        /* Transiciones suaves */
+        .transition-all-smooth {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        /* Grid de botones matemáticos */
+        .math-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+        }
+        
+        /* Estilos para la vista previa completa */
+        .preview-container {
+            height: calc(100vh - 144px);
+            overflow-y: auto;
+        }
+        
+        .editor-container {
+            height: calc(100vh - 144px);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .drag-over {
+            border: 2px dashed #4f46e5 !important;
+            background: #eef2ff !important;
+        }
+    </style>
+</head>
+<body class="bg-background-light text-secondary min-h-screen flex flex-col overflow-hidden">
+    
+    <!-- Header -->
+    <header class="h-16 bg-white border-b border-border-light px-6 flex items-center justify-between z-50 shadow-soft">
+        <div class="flex items-center gap-6">
+            <div class="flex items-center gap-3">
+                <div class="h-10 w-10 bg-primary flex items-center justify-center rounded-lg shadow-md overflow-hidden">
+                    <span class="material-symbols-outlined text-white text-2xl font-bold">science</span>
+                </div>
+                <div>
+                    <h1 class="text-primary text-sm font-extrabold leading-none uppercase tracking-wider">UNAN León</h1>
+                    <p class="text-[10px] text-gray-500 font-bold tracking-tight">Generador de Documentos Científicos</p>
+                </div>
+            </div>
+            <div class="h-8 w-px bg-gray-200"></div>
+            <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-ai-accent text-lg animate-pulse-subtle">auto_awesome</span>
+                <h2 class="text-secondary font-bold text-sm tracking-tight">Generación Automática <span class="text-ai-accent">Inteligente</span></h2>
+            </div>
+        </div>
+        
+        <div class="flex items-center gap-4">
+            <div class="flex items-center gap-2 px-3 py-1.5 bg-gray-50 border border-gray-200 rounded-lg">
+                <span class="material-symbols-outlined text-gray-400 text-sm">sync</span>
+                <span class="text-xs font-bold text-success-bright" id="sync-status">SINCRONIZADO</span>
+            </div>
+            
+            <div class="flex items-center gap-3 ml-4 border-l pl-4 border-gray-200">
+                <div class="text-right">
+                    <p class="text-xs font-bold text-gray-800 leading-none">Ismael A. Cárdenas L.</p>
+                    <p class="text-[9px] text-primary uppercase font-bold tracking-tighter">Lic. Matemática - UNAN León</p>
+                </div>
+                <div class="h-9 w-9 rounded-full border-2 border-white shadow-sm ring-1 ring-gray-200 bg-cover bg-center" style='background-image: url("https://images.unsplash.com/photo-1560250097-0b93528c311a?w=200&h=200&fit=crop&crop=face");'></div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex overflow-hidden">
+        
+        <!-- Panel Izquierdo: Editor y Controles -->
+        <aside class="w-[40%] bg-white border-r border-border-light flex flex-col overflow-hidden">
+            <!-- Panel de Configuración -->
+            <div class="p-6 bg-gradient-to-r from-slate-50 to-white border-b border-border-light">
+                <div class="flex flex-col gap-1.5 mb-4">
+                    <label class="text-[10px] font-black text-primary/60 uppercase tracking-[0.2em]">TEMA PRINCIPAL DEL DOCUMENTO</label>
+                    <div class="relative group">
+                        <input 
+                            id="temaInput"
+                            class="w-full pl-12 pr-4 py-4 rounded-xl border-2 border-ai-accent/30 bg-white text-xl font-bold text-secondary focus:ring-4 focus:ring-ai-accent/10 focus:border-ai-accent transition-all shadow-sm" 
+                            placeholder="Ej: Ecuaciones Diferenciales, Álgebra Lineal, Cálculo..." 
+                            type="text" 
+                            value="Ecuaciones de Cinemática"
+                            oninput="actualizarVistaPrevia()"
+                        />
+                        <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-ai-accent text-2xl">auto_awesome</span>
+                        <button 
+                            onclick="generarContenidoAutomatico()"
+                            class="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-1.5 px-3 py-1.5 bg-ai-accent text-white rounded-lg text-xs font-bold hover:shadow-lg transition-all shadow-sm"
+                        >
+                            <span class="material-symbols-outlined text-sm">bolt</span>
+                            GENERAR AUTOMÁTICO
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-1">NIVEL ACADÉMICO</label>
+                        <select id="nivelSelect" class="w-full bg-white border border-gray-200 rounded-lg text-sm py-2 px-3 focus:ring-2 focus:ring-primary/20" onchange="actualizarVistaPrevia()">
+                            <option>Pregrado - Licenciatura</option>
+                            <option selected>Posgrado - Maestría</option>
+                            <option>Investigación Avanzada</option>
+                            <option>Doctorado</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-1">ÁREA ESPECÍFICA</label>
+                        <select id="areaSelect" class="w-full bg-white border border-gray-200 rounded-lg text-sm py-2 px-3 focus:ring-2 focus:ring-primary/20" onchange="actualizarVistaPrevia()">
+                            <option>Matemáticas Puras</option>
+                            <option selected>Física Matemática</option>
+                            <option>Ingeniería Matemática</option>
+                            <option>Estadística</option>
+                            <option>Análisis Numérico</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <!-- Botones de Acción Rápida -->
+                <div class="flex flex-wrap gap-2 mt-4">
+                    <button onclick="insertarEcuacion('$$\\frac{d}{dx} f(x) = \\lim_{h\\to 0} \\frac{f(x+h)-f(x)}{h}$$')" 
+                            class="flex items-center gap-2 px-3 py-2 bg-blue-50 text-blue-700 rounded-lg text-xs font-bold hover:bg-blue-100 transition-all">
+                        <span class="material-symbols-outlined text-sm">functions</span>
+                        Derivada
+                    </button>
+                    <button onclick="insertarEcuacion('$$\\int_{a}^{b} f(x) dx = F(b) - F(a)$$')" 
+                            class="flex items-center gap-2 px-3 py-2 bg-green-50 text-green-700 rounded-lg text-xs font-bold hover:bg-green-100 transition-all">
+                        <span class="material-symbols-outlined text-sm">integration_instructions</span>
+                        Integral
+                    </button>
+                    <button onclick="insertarEcuacion('$$\\sum_{n=1}^{\\infty} \\frac{1}{n^2} = \\frac{\\pi^2}{6}$$')" 
+                            class="flex items-center gap-2 px-3 py-2 bg-purple-50 text-purple-700 rounded-lg text-xs font-bold hover:bg-purple-100 transition-all">
+                        <span class="material-symbols-outlined text-sm">sigma</span>
+                        Serie
+                    </button>
+                    <button onclick="insertarTeorema()" 
+                            class="flex items-center gap-2 px-3 py-2 bg-emerald-50 text-emerald-700 rounded-lg text-xs font-bold hover:bg-emerald-100 transition-all">
+                        <span class="material-symbols-outlined text-sm">menu_book</span>
+                        Teorema
+                    </button>
+                    <button onclick="insertarDefinicion()" 
+                            class="flex items-center gap-2 px-3 py-2 bg-violet-50 text-violet-700 rounded-lg text-xs font-bold hover:bg-violet-100 transition-all">
+                        <span class="material-symbols-outlined text-sm">note</span>
+                        Definición
+                    </button>
+                </div>
+            </div>
+
+            <!-- Editor Principal -->
+            <div class="flex-1 flex flex-col overflow-hidden editor-container">
+                <div class="px-4 py-3 border-b border-border-light bg-white/95 backdrop-blur-sm flex items-center justify-between sticky top-0 z-10">
+                    <div class="flex items-center gap-1">
+                        <button class="p-2 hover:bg-gray-100 rounded-lg text-gray-600 transition-all" title="Negrita" onclick="formatText('bold')">
+                            <span class="material-symbols-outlined text-lg">format_bold</span>
+                        </button>
+                        <button class="p-2 hover:bg-gray-100 rounded-lg text-gray-600 transition-all" title="Cursiva" onclick="formatText('italic')">
+                            <span class="material-symbols-outlined text-lg">format_italic</span>
+                        </button>
+                        <div class="w-px h-6 bg-gray-200 mx-2 self-center"></div>
+                        <button class="p-2 hover:bg-gray-100 rounded-lg text-gray-600 transition-all" title="Insertar Tabla" onclick="insertarTabla()">
+                            <span class="material-symbols-outlined text-lg">table_chart</span>
+                        </button>
+                        <button class="p-2 hover:bg-gray-100 rounded-lg text-gray-600 transition-all" title="Insertar Imagen" onclick="document.getElementById('fileInput').click()">
+                            <span class="material-symbols-outlined text-lg">image</span>
+                        </button>
+                        <input type="file" id="fileInput" accept="image/*" style="display: none" onchange="subirImagen(event)">
+                    </div>
+                    
+                    <div class="flex items-center gap-2">
+                        <button onclick="limpiarContenido()" class="p-2 hover:bg-red-50 rounded-lg text-red-500 transition-all" title="Limpiar Todo">
+                            <span class="material-symbols-outlined text-lg">delete</span>
+                        </button>
+                        <button onclick="guardarBorrador()" class="p-2 hover:bg-green-50 rounded-lg text-green-600 transition-all" title="Guardar Borrador">
+                            <span class="material-symbols-outlined text-lg">save</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Área de Texto -->
+                <textarea 
+                    id="editorTexto"
+                    class="flex-1 w-full p-6 text-base font-medium leading-relaxed border-0 focus:ring-0 resize-none text-secondary placeholder:text-gray-300 custom-scrollbar transition-all-smooth"
+                    placeholder="Escribe tu contenido científico aquí... Usa $...$ para ecuaciones en línea y $$...$$ para ecuaciones display. Presiona Enter para nuevas líneas."
+                    oninput="actualizarVistaPrevia()"
+                    onkeydown="manejarEnter(event)"
+                    spellcheck="false"
+                >Para analizar el movimiento en mecánica clásica, comenzamos definiendo el vector de posición \( \mathbf{r}(t) \). La velocidad instantánea es la derivada temporal:
+
+\[
+\mathbf{v}(t) = \frac{d\mathbf{r}}{dt}
+\]
+
+Y la aceleración es:
+
+\[
+\mathbf{a}(t) = \frac{d\mathbf{v}}{dt} = \frac{d^2\mathbf{r}}{dt^2}
+\]
+
+Para el caso especial de aceleración constante \( \mathbf{a} = \text{constante} \), podemos integrar para obtener:
+
+\[
+\mathbf{r}(t) = \mathbf{r}_0 + \mathbf{v}_0 t + \frac{1}{2} \mathbf{a} t^2
+\]
+
+Esta es la ecuación fundamental del movimiento con aceleración constante, ampliamente utilizada en física y ingeniería.</textarea>
+
+                <!-- Contador y Estadísticas -->
+                <div class="px-6 py-3 border-t border-border-light bg-white/80 text-xs text-gray-500 flex justify-between">
+                    <div class="flex items-center gap-4">
+                        <span>📝 <span id="contadorPalabras">0</span> palabras</span>
+                        <span>📊 <span id="contadorEcuaciones">0</span> ecuaciones</span>
+                        <span>⏱️ Actualizado: <span id="ultimaActualizacion">ahora</span></span>
+                    </div>
+                    <button onclick="copiarContenido()" class="text-ai-accent hover:text-primary font-bold">
+                        📋 Copiar contenido
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Panel Derecho: Vista Previa Completa -->
+        <section class="flex-1 bg-gradient-to-b from-gray-50 to-white flex flex-col overflow-hidden">
+            <div class="h-12 bg-white border-b border-border-light px-6 flex items-center justify-between shadow-sm z-10">
+                <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-ai-accent text-lg">visibility</span>
+                    <span class="text-sm font-bold text-gray-700">VISTA PREVIA EN TIEMPO REAL</span>
+                    <div class="ml-4 px-3 py-1 bg-green-100 text-green-800 rounded-full text-xs font-bold flex items-center gap-1">
+                        <span class="material-symbols-outlined text-sm animate-pulse-subtle">sync</span>
+                        <span id="estadoRender">Renderizando...</span>
+                    </div>
+                </div>
+                
+                <div class="flex items-center gap-3">
+                    <div class="flex items-center bg-gray-100 rounded-lg p-1">
+                        <button class="p-1 hover:bg-white hover:shadow-sm rounded text-gray-500 transition-all" onclick="cambiarZoom(0.9)">
+                            <span class="material-symbols-outlined text-sm">remove</span>
+                        </button>
+                        <span class="px-3 text-sm font-bold text-gray-700" id="zoomLevel">100%</span>
+                        <button class="p-1 hover:bg-white hover:shadow-sm rounded text-gray-500 transition-all" onclick="cambiarZoom(1.1)">
+                            <span class="material-symbols-outlined text-sm">add</span>
+                        </button>
+                    </div>
+                    
+                    <button onclick="modoPantallaCompleta()" class="flex items-center gap-2 px-3 py-1.5 text-gray-600 hover:text-primary text-xs font-bold transition-all">
+                        <span class="material-symbols-outlined text-base">fullscreen</span>
+                    </button>
+                    
+                    <button onclick="imprimirVistaPrevia()" class="flex items-center gap-2 px-3 py-1.5 bg-primary text-white text-xs font-bold rounded-lg hover:shadow-lg transition-all">
+                        <span class="material-symbols-outlined text-sm">print</span>
+                        Imprimir
+                    </button>
+                </div>
+            </div>
+
+            <!-- Contenedor de Vista Previa -->
+            <div class="flex-1 overflow-y-auto custom-scrollbar preview-container" id="previewContainer">
+                <div class="max-w-[900px] mx-auto p-8 pb-20 space-y-8">
+                    
+                    <!-- PORTADA -->
+                    <div id="portadaPreview" class="bg-white shadow-hard min-h-[1100px] p-[2.5cm] academic-preview flex flex-col items-center justify-between text-center relative border border-gray-200 rounded-2xl">
+                        <!-- Contenido de portada generado automáticamente -->
+                    </div>
+
+                    <!-- PÁGINA 1: INTRODUCCIÓN AUTOMÁTICA -->
+                    <div id="introduccionPreview" class="bg-white shadow-hard min-h-[1100px] p-[2.5cm] academic-preview text-gray-900 border border-gray-200 rounded-2xl">
+                        <!-- Introducción generada automáticamente -->
+                    </div>
+
+                    <!-- PÁGINA 2: CONTENIDO DEL USUARIO -->
+                    <div id="contenidoPreview" class="bg-white shadow-hard min-h-[1100px] p-[2.5cm] academic-preview text-gray-900 border border-gray-200 rounded-2xl">
+                        <!-- Contenido del usuario renderizado -->
+                    </div>
+
+                    <!-- PÁGINA 3: CONCLUSIÓN Y RECOMENDACIONES -->
+                    <div id="conclusionPreview" class="bg-white shadow-hard min-h-[1100px] p-[2.5cm] academic-preview text-gray-900 border border-gray-200 rounded-2xl">
+                        <!-- Conclusión y recomendaciones automáticas -->
+                    </div>
+
+                    <!-- PÁGINA 4: BIBLIOGRAFÍA -->
+                    <div id="bibliografiaPreview" class="bg-white shadow-hard min-h-[1100px] p-[2.5cm] academic-preview text-gray-900 border border-gray-200 rounded-2xl">
+                        <!-- Bibliografía automática -->
+                    </div>
+
+                </div>
+            </div>
+            
+            <!-- Indicador de Progreso -->
+            <div class="px-6 py-3 border-t border-border-light bg-white/95 text-center">
+                <div class="inline-flex items-center gap-3 px-4 py-2 bg-blue-50 rounded-full">
+                    <div class="w-48 h-2 bg-blue-100 rounded-full overflow-hidden">
+                        <div id="progressBar" class="h-full bg-ai-accent rounded-full transition-all duration-300" style="width: 0%"></div>
+                    </div>
+                    <span class="text-xs font-bold text-blue-700" id="progressText">Generando vista previa...</span>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer con Botones de Descarga -->
+    <footer class="h-20 bg-white border-t border-border-light flex items-center justify-between px-8 shadow-soft">
+        <div class="flex items-center gap-6">
+            <div class="flex items-center gap-3">
+                <div class="flex items-center gap-2">
+                    <div class="size-3 bg-success-bright rounded-full animate-pulse"></div>
+                    <span class="text-xs font-bold text-gray-500 uppercase tracking-widest">Sistema Inteligente Activo</span>
+                </div>
+                <div class="w-px h-6 bg-gray-200"></div>
+                <p class="text-xs font-medium text-gray-400">
+                    <span id="contadorCambios">0</span> cambios detectados • 
+                    <span id="tiempoProcesamiento">0.5s</span> tiempo de procesamiento
+                </p>
+            </div>
+        </div>
+        
+        <div class="flex items-center gap-4">
+            <button onclick="descargarWord()" 
+                    class="flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-blue-50 to-white text-blue-700 font-bold rounded-xl hover:shadow-xl transition-all border-2 border-blue-200 group shadow-sm hover:border-blue-300">
+                <span class="material-symbols-outlined text-xl group-hover:scale-110 transition-transform">description</span>
+                <div class="text-left">
+                    <div class="text-sm">Descargar Word</div>
+                    <div class="text-[10px] text-blue-500 font-normal">Documento listo para usar</div>
+                </div>
+            </button>
+            
+            <button onclick="descargarLatex()" 
+                    class="flex items-center gap-3 px-8 py-3 bg-gradient-to-r from-primary to-blue-700 text-white font-bold rounded-xl hover:shadow-2xl hover:brightness-110 transition-all group shadow-lg">
+                <span class="material-symbols-outlined text-xl group-hover:rotate-12 transition-transform">code</span>
+                <div class="text-left">
+                    <div class="text-sm">Descargar LaTeX</div>
+                    <div class="text-[10px] text-blue-100 font-normal">Código completo con paquetes</div>
+                </div>
+            </button>
+            
+            <div class="w-px h-10 bg-gray-200 mx-2"></div>
+            
+            <button onclick="mostrarConfiguracion()" 
+                    class="p-3 bg-white border border-gray-200 text-gray-400 rounded-xl hover:text-primary hover:border-primary transition-all shadow-sm hover:shadow-md"
+                    title="Configuración Avanzada">
+                <span class="material-symbols-outlined">tune</span>
+            </button>
+            
+            <button onclick="exportarPDF()" 
+                    class="p-3 bg-red-50 border border-red-200 text-red-600 rounded-xl hover:text-white hover:bg-red-600 transition-all shadow-sm hover:shadow-md"
+                    title="Exportar a PDF">
+                <span class="material-symbols-outlined">picture_as_pdf</span>
+            </button>
+        </div>
+    </footer>
+
+    <!-- Scripts JavaScript -->
+    <script>
+        // Configuración de MathJax
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                processEscapes: true,
+                processEnvironments: true,
+                tags: 'ams'
+            },
+            options: {
+                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+                ignoreHtmlClass: 'tex2jax_ignore',
+                processHtmlClass: 'tex2jax_process'
+            },
+            startup: {
+                pageReady: () => {
+                    return MathJax.startup.defaultPageReady();
+                }
+            }
+        };
+
+        // Variables globales
+        let zoomLevel = 1.0;
+        let cambiosRealizados = 0;
+        let tiempoInicio = Date.now();
+        let contenidoAnterior = '';
+        let temaActual = 'Ecuaciones de Cinemática';
+
+        // Inicialización
+        document.addEventListener('DOMContentLoaded', function() {
+            // Generar contenido inicial
+            generarContenidoAutomatico();
+            
+            // Configurar intervalo para actualizar estadísticas
+            setInterval(actualizarEstadisticas, 2000);
+            
+            // Actualizar tiempo de procesamiento
+            setInterval(() => {
+                const tiempo = ((Date.now() - tiempoInicio) / 1000).toFixed(1);
+                document.getElementById('tiempoProcesamiento').textContent = tiempo + 's';
+            }, 1000);
+        });
+
+        // Función principal para actualizar vista previa
+        function actualizarVistaPrevia() {
+            const editor = document.getElementById('editorTexto');
+            const tema = document.getElementById('temaInput').value;
+            const nivel = document.getElementById('nivelSelect').value;
+            const area = document.getElementById('areaSelect').value;
+            
+            // Actualizar progreso
+            actualizarProgreso(10);
+            
+            // Actualizar tema actual si cambió
+            if (tema !== temaActual) {
+                temaActual = tema;
+                cambiosRealizados++;
+                document.getElementById('contadorCambios').textContent = cambiosRealizados;
+            }
+            
+            // Actualizar contadores
+            actualizarContadores(editor.value);
+            
+            // Actualizar estado de render
+            document.getElementById('estadoRender').textContent = 'Procesando...';
+            
+            // Generar todas las secciones
+            generarPortada(tema, nivel);
+            actualizarProgreso(30);
+            
+            generarIntroduccion(tema, nivel, area);
+            actualizarProgreso(50);
+            
+            generarContenidoUsuario(editor.value);
+            actualizarProgreso(70);
+            
+            generarConclusion(tema, nivel);
+            actualizarProgreso(85);
+            
+            generarBibliografia(tema);
+            actualizarProgreso(95);
+            
+            // Reprocesar MathJax
+            setTimeout(() => {
+                if (window.MathJax) {
+                    MathJax.typesetPromise().then(() => {
+                        document.getElementById('estadoRender').textContent = 'Renderizado completado';
+                        actualizarProgreso(100);
+                        
+                        // Restablecer barra de progreso después de 1 segundo
+                        setTimeout(() => {
+                            document.getElementById('progressBar').style.width = '0%';
+                        }, 1000);
+                    });
+                }
+            }, 100);
+            
+            // Actualizar última actualización
+            const ahora = new Date();
+            document.getElementById('ultimaActualizacion').textContent = 
+                ahora.getHours().toString().padStart(2, '0') + ':' + 
+                ahora.getMinutes().toString().padStart(2, '0') + ':' + 
+                ahora.getSeconds().toString().padStart(2, '0');
+        }
+
+        // Función para generar contenido automático basado en el tema
+        function generarContenidoAutomatico() {
+            const tema = document.getElementById('temaInput').value;
+            const nivel = document.getElementById('nivelSelect').value;
+            const area = document.getElementById('areaSelect').value;
+            
+            let contenidoBase = '';
+            
+            // Generar contenido según el tema
+            if (tema.toLowerCase().includes('cinemática') || tema.toLowerCase().includes('movimiento')) {
+                contenidoBase = `Para analizar el movimiento en mecánica clásica, comenzamos definiendo el vector de posición \\( \\mathbf{r}(t) \\). La velocidad instantánea es la derivada temporal:
+
+\\[
+\\mathbf{v}(t) = \\frac{d\\mathbf{r}}{dt}
+\\]
+
+Y la aceleración es:
+
+\\[
+\\mathbf{a}(t) = \\frac{d\\mathbf{v}}{dt} = \\frac{d^2\\mathbf{r}}{dt^2}
+\\]
+
+Para el caso especial de aceleración constante \\( \\mathbf{a} = \\text{constante} \\), podemos integrar para obtener:
+
+\\[
+\\mathbf{r}(t) = \\mathbf{r}_0 + \\mathbf{v}_0 t + \\frac{1}{2} \\mathbf{a} t^2
+\\]
+
+Esta es la ecuación fundamental del movimiento con aceleración constante, ampliamente utilizada en física y ingeniería.
+
+**Teorema 1.1 (Movimiento Uniformemente Acelerado)**
+Si una partícula se mueve con aceleración constante \\( \\mathbf{a} \\), su posición en función del tiempo está dada por la ecuación cuadrática anterior.
+
+**Ejemplo 1.1**
+Consideremos una partícula que parte del reposo \\( \\mathbf{v}_0 = 0 \\) desde el origen \\( \\mathbf{r}_0 = 0 \\) con aceleración \\( \\mathbf{a} = 9.8\\, \\text{m/s}^2 \\) en dirección vertical. Su posición después de 3 segundos es:
+
+\\[
+\\mathbf{r}(3) = \\frac{1}{2} (9.8) (3)^2 = 44.1\\, \\text{m}
+\\]`;
+            
+            } else if (tema.toLowerCase().includes('diferencial') || tema.toLowerCase().includes('ecuación')) {
+                contenidoBase = `Una ecuación diferencial ordinaria (EDO) de primer orden tiene la forma general:
+
+\\[
+\\frac{dy}{dx} = f(x, y)
+\\]
+
+**Definición 1.1 (Solución de una EDO)**
+Una función \\( y = \\phi(x) \\) definida en un intervalo \\( I \\) es solución de la EDO si:
+
+\\[
+\\phi'(x) = f(x, \\phi(x)) \\quad \\text{para todo } x \\in I
+\\]
+
+**Teorema 1.1 (Existencia y Unicidad)**
+Sea \\( f(x, y) \\) continua en una región rectangular \\( R \\) que contiene al punto \\( (x_0, y_0) \\). Si \\( \\frac{\\partial f}{\\partial y} \\) también es continua en \\( R \\), entonces existe un intervalo \\( |x - x_0| < h \\) en el cual el problema de valor inicial:
+
+\\[
+\\begin{cases}
+\\frac{dy}{dx} = f(x, y) \\\\
+y(x_0) = y_0
+\\end{cases}
+\\]
+
+tiene una única solución.`;
+            
+            } else if (tema.toLowerCase().includes('álgebra') || tema.toLowerCase().includes('lineal')) {
+                contenidoBase = `Un espacio vectorial \\( V \\) sobre un campo \\( \\mathbb{F} \\) es un conjunto no vacío con dos operaciones: suma vectorial y multiplicación por escalar, que satisfacen ocho axiomas.
+
+**Definición 1.1 (Base de un Espacio Vectorial)**
+Un conjunto de vectores \\( \\{ \\mathbf{v}_1, \\mathbf{v}_2, \\dots, \\mathbf{v}_n \\} \\) es una base de \\( V \\) si:
+1. Genera \\( V \\)
+2. Es linealmente independiente
+
+**Teorema 1.1 (Dimensión)**
+Todas las bases de un espacio vectorial \\( V \\) tienen el mismo número de elementos, llamado dimensión de \\( V \\).
+
+La matriz asociada a una transformación lineal \\( T: V \\to W \\) respecto a bases \\( B_V \\) y \\( B_W \\) se calcula como:
+
+\\[
+[T]_{B_W}^{B_V} = \\begin{pmatrix}
+| & | & & | \\\\
+[T(\\mathbf{v}_1)]_{B_W} & [T(\\mathbf{v}_2)]_{B_W} & \\cdots & [T(\\mathbf{v}_n)]_{B_W} \\\\
+| & | & & |
+\\end{pmatrix}
+\\]`;
+            
+            } else {
+                contenidoBase = `El estudio de "${tema}" representa una contribución significativa al campo de las ${area}. 
+
+**Definición 1.1 (Concepto Fundamental)**
+En el contexto de ${tema}, definimos el concepto principal como...
+
+**Teorema 1.1 (Resultado Principal)**
+Bajo condiciones apropiadas, se cumple que...
+
+**Ejemplo 1.1 (Aplicación Práctica)**
+Considere el siguiente caso de estudio que ilustra la teoría desarrollada:
+
+\\[
+f(x) = \\int_{0}^{x} g(t) \\, dt
+\\]
+
+donde \\( g(t) \\) satisface ciertas propiedades de regularidad.
+
+La importancia de este estudio radica en su aplicabilidad a problemas reales en ${area}, particularmente en el nivel de ${nivel}.`;
+            }
+            
+            // Insertar contenido en el editor
+            document.getElementById('editorTexto').value = contenidoBase;
+            
+            // Forzar actualización de vista previa
+            actualizarVistaPrevia();
+            
+            // Mostrar notificación
+            mostrarNotificacion('Contenido generado automáticamente', 'success');
+        }
+
+        // Funciones auxiliares
+        function actualizarProgreso(porcentaje) {
+            const progressBar = document.getElementById('progressBar');
+            const progressText = document.getElementById('progressText');
+            
+            progressBar.style.width = porcentaje + '%';
+            
+            if (porcentaje < 30) {
+                progressText.textContent = 'Generando estructura...';
+            } else if (porcentaje < 60) {
+                progressText.textContent = 'Procesando contenido...';
+            } else if (porcentaje < 90) {
+                progressText.textContent = 'Renderizando ecuaciones...';
+            } else {
+                progressText.textContent = 'Vista previa lista';
+            }
+        }
+
+        function actualizarContadores(texto) {
+            // Contar palabras
+            const palabras = texto.trim().split(/\s+/).filter(word => word.length > 0);
+            document.getElementById('contadorPalabras').textContent = palabras.length;
+            
+            // Contar ecuaciones
+            const ecuacionesInline = (texto.match(/\$.*?\$/g) || []).length;
+            const ecuacionesDisplay = (texto.match(/\$\$.*?\$\$/g) || []).length;
+            const totalEcuaciones = ecuacionesInline + ecuacionesDisplay;
+            document.getElementById('contadorEcuaciones').textContent = totalEcuaciones;
+        }
+
+        function actualizarEstadisticas() {
+            const editor = document.getElementById('editorTexto');
+            if (editor.value !== contenidoAnterior) {
+                cambiosRealizados++;
+                document.getElementById('contadorCambios').textContent = cambiosRealizados;
+                contenidoAnterior = editor.value;
+            }
+        }
+
+        // Funciones para insertar elementos
+        function insertarEcuacion(ecuacion) {
+            const editor = document.getElementById('editorTexto');
+            const cursorPos = editor.selectionStart;
+            const textBefore = editor.value.substring(0, cursorPos);
+            const textAfter = editor.value.substring(cursorPos);
+            
+            editor.value = textBefore + '\n' + ecuacion + '\n' + textAfter;
+            editor.focus();
+            editor.selectionStart = cursorPos + ecuacion.length + 2;
+            editor.selectionEnd = cursorPos + ecuacion.length + 2;
+            
+            actualizarVistaPrevia();
+            mostrarNotificacion('Ecuación insertada', 'info');
+        }
+
+        function insertarTeorema() {
+            const teorema = `**Teorema** (Nuevo Teorema)
+Sea $f: X \\to Y$ una función que satisface las siguientes condiciones:
+1. Condición 1
+2. Condición 2
+
+Entonces se cumple que:
+
+$$
+\\int_X f(x) \\, dx = \\lim_{n\\to\\infty} \\sum_{i=1}^n f(x_i) \\Delta x_i
+$$
+
+**Demostración:**
+La demostración se sigue de...`;
+            
+            insertarEcuacion(teorema);
+        }
+
+        function insertarDefinicion() {
+            const definicion = `**Definición** (Nuevo Concepto)
+Se define el operador $\\mathcal{L}$ como:
+
+$$
+\\mathcal{L}[f](x) = \\int_{-\\infty}^{\\infty} K(x,t) f(t) \\, dt
+$$
+
+donde $K(x,t)$ es el núcleo del operador.`;
+            
+            insertarEcuacion(definicion);
+        }
+
+        function insertarTabla() {
+            const tabla = `| Variable | Descripción | Unidad |
+|----------|-------------|--------|
+| $x$ | Posición horizontal | m |
+| $v$ | Velocidad | m/s |
+| $a$ | Aceleración | m/s² |
+| $t$ | Tiempo | s |`;
+            
+            insertarEcuacion(tabla);
+        }
+
+        function subirImagen(event) {
+            const file = event.target.files[0];
+            if (file) {
+                if (file.size > 5 * 1024 * 1024) {
+                    mostrarNotificacion('La imagen es demasiado grande (máximo 5MB)', 'error');
+                    return;
+                }
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const imgMarkdown = `![Imagen: ${file.name}](${e.target.result})\n*Figura: Descripción de la imagen*`;
+                    insertarEcuacion(imgMarkdown);
+                    mostrarNotificacion('Imagen insertada correctamente', 'success');
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Funciones de formato
+        function formatText(command) {
+            const editor = document.getElementById('editorTexto');
+            const start = editor.selectionStart;
+            const end = editor.selectionEnd;
+            const selectedText = editor.value.substring(start, end);
+            
+            let formattedText = '';
+            if (command === 'bold') {
+                formattedText = `**${selectedText}**`;
+            } else if (command === 'italic') {
+                formattedText = `*${selectedText}*`;
+            }
+            
+            editor.value = editor.value.substring(0, start) + formattedText + editor.value.substring(end);
+            editor.focus();
+            editor.selectionStart = start + formattedText.length;
+            editor.selectionEnd = start + formattedText.length;
+            
+            actualizarVistaPrevia();
+        }
+
+        function manejarEnter(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                const editor = event.target;
+                const cursorPos = editor.selectionStart;
+                
+                // Insertar nueva línea con formato adecuado
+                editor.value = editor.value.substring(0, cursorPos) + '\n' + editor.value.substring(cursorPos);
+                editor.selectionStart = cursorPos + 1;
+                editor.selectionEnd = cursorPos + 1;
+                
+                actualizarVistaPrevia();
+            }
+        }
+
+        // Funciones de generación de contenido específico
+        function generarPortada(tema, nivel) {
+            const portadaHTML = `
+                <div class="w-full space-y-1">
+                    <h2 class="text-xl font-bold text-gray-900 uppercase tracking-[0.2em] leading-tight">Universidad Nacional Autónoma de Nicaragua</h2>
+                    <h3 class="text-lg font-medium text-gray-700 uppercase tracking-widest">UNAN - LEÓN</h3>
+                    <div class="w-24 h-1 bg-primary mx-auto my-6"></div>
+                    <h4 class="text-sm font-semibold text-gray-500 uppercase tracking-[0.15em]">Facultad de Ciencias y Tecnología</h4>
+                </div>
+                
+                <div class="flex flex-col items-center gap-8 py-10">
+                    <div class="relative">
+                        <div class="w-48 h-48 rounded-full border-4 border-white shadow-2xl overflow-hidden ring-4 ring-primary/5">
+                            <div class="w-full h-full bg-cover bg-center" style='background-image: url("https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400&h=400&fit=crop&crop=face")'></div>
+                        </div>
+                        <div class="absolute -bottom-4 left-1/2 -translate-x-1/2 bg-primary text-white text-[10px] font-black py-1.5 px-4 rounded-full shadow-lg whitespace-nowrap tracking-widest">
+                            AUTOR PRINCIPAL
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <p class="text-sm font-medium text-gray-400 tracking-widest uppercase">${nivel}</p>
+                        <h1 class="text-4xl font-bold text-gray-900 leading-tight text-center max-w-2xl">${tema}</h1>
+                        <div class="w-40 h-px bg-gray-200 mx-auto mt-8"></div>
+                    </div>
+                </div>
+                
+                <div class="w-full space-y-10">
+                    <div class="space-y-2">
+                        <p class="text-lg font-bold text-gray-800 text-center">Ismael Antonio Cárdenas López</p>
+                        <p class="text-sm font-medium text-gray-500 text-center">Licenciado en Matemática - UNAN León</p>
+                    </div>
+                    
+                    <div class="space-y-2 pt-8 border-t border-gray-100">
+                        <p class="text-sm font-bold text-primary uppercase tracking-widest text-center">Actualmente labora para la</p>
+                        <p class="text-sm font-medium text-gray-600 text-center">Universidad Nacional Padre Gaspar García Laviana</p>
+                        <p class="text-sm font-bold mt-10 text-center text-gray-700">León, Nicaragua — ${new Date().getFullYear()}</p>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('portadaPreview').innerHTML = portadaHTML;
+        }
+
+        function generarIntroduccion(tema, nivel, area) {
+            const introducciones = {
+                'Pregrado - Licenciatura': `Esta investigación se desarrolla en el marco del ${nivel} y tiene como objetivo principal analizar y comprender los fundamentos teóricos de "${tema}". El estudio se enfoca en proporcionar una base sólida para el entendimiento de conceptos clave en el área de ${area}, con aplicaciones directas en la formación profesional.`,
+                'Posgrado - Maestría': `El presente trabajo de investigación en el nivel de ${nivel} aborda el estudio avanzado de "${tema}", con énfasis en el análisis teórico y metodológico. Este estudio contribuye al cuerpo de conocimiento especializado en ${area}, proporcionando nuevas perspectivas y enfoques para problemas complejos en el campo.`,
+                'Investigación Avanzada': `Como parte de un programa de ${nivel}, esta investigación explora las fronteras del conocimiento en "${tema}". El enfoque metodológico integra técnicas avanzadas de análisis matemático y computacional, buscando contribuciones significativas al desarrollo de la ${area} contemporánea.`,
+                'Doctorado': `Esta tesis doctoral representa una contribución original al campo de "${tema}". El estudio se enmarca en la ${area} y desarrolla nuevos marcos teóricos y metodológicos que avanzan significativamente el estado del arte en esta disciplina especializada.`
+            };
+            
+            const introduccionHTML = `
+                <section class="mb-10">
+                    <h4 class="text-xs font-bold uppercase tracking-[0.3em] text-primary border-b-2 border-primary/10 pb-2 mb-6">Introducción</h4>
+                    <div class="space-y-4">
+                        <p class="text-base leading-[1.8] text-justify">
+                            ${introducciones[nivel] || introducciones['Posgrado - Maestría']}
+                        </p>
+                        
+                        <div class="theorem-box p-4 rounded-lg my-6">
+                            <p class="text-sm font-bold text-theorem-green mb-2 flex items-center gap-2">
+                                <span class="material-symbols-outlined text-base">menu_book</span>
+                                Relevancia Académica
+                            </p>
+                            <p class="text-base leading-[1.7] text-gray-700">
+                                Este estudio es particularmente relevante para el desarrollo de la ${area} en el contexto nicaragüense, aportando herramientas analíticas y metodológicas que pueden ser aplicadas en diversos campos de la ciencia y la tecnología.
+                            </p>
+                        </div>
+                        
+                        <p class="text-base leading-[1.8] text-justify">
+                            La metodología empleada combina análisis teórico riguroso con aplicaciones prácticas, buscando establecer puentes entre la teoría abstracta y sus posibles implementaciones. El documento está estructurado para guiar al lector desde los conceptos fundamentales hasta las aplicaciones más avanzadas de "${tema}".
+                        </p>
+                    </div>
+                </section>
+                
+                <section class="mb-10">
+                    <h4 class="text-xs font-bold uppercase tracking-[0.3em] text-primary border-b-2 border-primary/10 pb-2 mb-6">Objetivos</h4>
+                    <ul class="space-y-3 list-none">
+                        <li class="text-base leading-[1.6] flex gap-3">
+                            <span class="text-primary font-bold mt-1">•</span>
+                            <p>Analizar los fundamentos teóricos de "${tema}" desde una perspectiva matemática rigurosa.</p>
+                        </li>
+                        <li class="text-base leading-[1.6] flex gap-3">
+                            <span class="text-primary font-bold mt-1">•</span>
+                            <p>Desarrollar aplicaciones prácticas de los conceptos estudiados en el contexto de ${area}.</p>
+                        </li>
+                        <li class="text-base leading-[1.6] flex gap-3">
+                            <span class="text-primary font-bold mt-1">•</span>
+                            <p>Proporcionar herramientas metodológicas para la investigación futura en esta área del conocimiento.</p>
+                        </li>
+                    </ul>
+                </section>
+            `;
+            
+            document.getElementById('introduccionPreview').innerHTML = introduccionHTML;
+        }
+
+        function generarContenidoUsuario(contenido) {
+            // Convertir Markdown a HTML básico
+            let htmlContenido = contenido
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                .replace(/`(.*?)`/g, '<code class="bg-gray-100 px-1 rounded">$1</code>')
+                .replace(/^# (.*$)/gm, '<h1 class="text-2xl font-bold mt-8 mb-4 text-gray-800">$1</h1>')
+                .replace(/^## (.*$)/gm, '<h2 class="text-xl font-bold mt-6 mb-3 text-gray-800">$1</h2>')
+                .replace(/^### (.*$)/gm, '<h3 class="text-lg font-bold mt-4 mb-2 text-gray-800">$1</h3>')
+                .replace(/\n\n/g, '</p><p class="mt-4">')
+                .replace(/\n/g, '<br>');
+            
+            // Procesar tablas Markdown
+            htmlContenido = htmlContenido.replace(/\|(.*?)\|/g, function(match) {
+                const cells = match.split('|').filter(cell => cell.trim() !== '');
+                if (cells.length > 1) {
+                    return `<td class="border px-4 py-2">${cells.join('</td><td class="border px-4 py-2">')}</td>`;
+                }
+                return match;
+            });
+            
+            const contenidoHTML = `
+                <section>
+                    <h4 class="text-xs font-bold uppercase tracking-[0.3em] text-primary border-b-2 border-primary/10 pb-2 mb-6">Desarrollo del Tema</h4>
+                    <div class="space-y-6 academic-preview">
+                        ${htmlContenido}
+                    </div>
+                </section>
+            `;
+            
+            document.getElementById('contenidoPreview').innerHTML = contenidoHTML;
+        }
+
+        function generarConclusion(tema, nivel) {
+            const conclusionHTML = `
+                <section class="mb-10">
+                    <h4 class="text-xs font-bold uppercase tracking-[0.3em] text-primary border-b-2 border-primary/10 pb-2 mb-6">Conclusión</h4>
+                    <div class="space-y-4">
+                        <p class="text-base leading-[1.8] text-justify">
+                            El análisis desarrollado en este documento sobre "${tema}" ha permitido establecer conclusiones fundamentales que contribuyen al avance del conocimiento en esta área especializada. Los resultados obtenidos validan los enfoques teóricos presentados y abren nuevas perspectivas para la investigación futura.
+                        </p>
+                        
+                        <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r-lg my-6">
+                            <p class="text-sm font-bold text-blue-700 mb-2">Hallazgos Principales</p>
+                            <ul class="space-y-2 list-none">
+                                <li class="text-base leading-[1.6] flex gap-2">
+                                    <span class="material-symbols-outlined text-blue-500 text-sm">check_circle</span>
+                                    <p>Se ha confirmado la validez de los modelos matemáticos aplicados a "${tema}"</p>
+                                </li>
+                                <li class="text-base leading-[1.6] flex gap-2">
+                                    <span class="material-symbols-outlined text-blue-500 text-sm">check_circle</span>
+                                    <p>Se han identificado aplicaciones prácticas en el contexto de ${nivel.toLowerCase()}</p>
+                                </li>
+                                <li class="text-base leading-[1.6] flex gap-2">
+                                    <span class="material-symbols-outlined text-blue-500 text-sm">check_circle</span>
+                                    <p>Se proponen nuevas líneas de investigación basadas en los resultados obtenidos</p>
+                                </li>
+                            </ul>
+                        </div>
+                        
+                        <p class="text-base leading-[1.8] text-justify">
+                            Este trabajo representa una contribución significativa al campo de estudio y establece bases sólidas para futuras investigaciones. La metodología desarrollada puede ser adaptada y aplicada a problemas similares en áreas relacionadas.
+                        </p>
+                    </div>
+                </section>
+                
+                <section>
+                    <h4 class="text-xs font-bold uppercase tracking-[0.3em] text-primary border-b-2 border-primary/10 pb-2 mb-6">Recomendaciones</h4>
+                    <div class="space-y-6">
+                        <div class="definition-box p-5 rounded-xl">
+                            <p class="text-sm font-bold text-definition-purple mb-3 flex items-center gap-2">
+                                <span class="material-symbols-outlined text-base">lightbulb</span>
+                                Para Investigación Futura
+                            </p>
+                            <ul class="space-y-3 list-none">
+                                <li class="text-base leading-[1.6] flex gap-3">
+                                    <span class="text-definition-purple font-bold mt-1">1.</span>
+                                    <p>Extender el análisis a casos no lineales y sistemas dinámicos complejos</p>
+                                </li>
+                                <li class="text-base leading-[1.6] flex gap-3">
+                                    <span class="text-definition-purple font-bold mt-1">2.</span>
+                                    <p>Implementar simulaciones computacionales para validación experimental</p>
+                                </li>
+                                <li class="text-base leading-[1.6] flex gap-3">
+                                    <span class="text-definition-purple font-bold mt-1">3.</span>
+                                    <p>Explorar aplicaciones interdisciplinarias en ingeniería y ciencias naturales</p>
+                                </li>
+                            </ul>
+                        </div>
+                        
+                        <div class="example-box p-5 rounded-xl">
+                            <p class="text-sm font-bold text-example-yellow mb-3 flex items-center gap-2">
+                                <span class="material-symbols-outlined text-base">school</span>
+                                Para el Desarrollo Académico
+                            </p>
+                            <ul class="space-y-3 list-none">
+                                <li class="text-base leading-[1.6] flex gap-3">
+                                    <span class="text-example-yellow font-bold mt-1">•</span>
+                                    <p>Incorporar estos contenidos en los planes de estudio de ${nivel}</p>
+                                </li>
+                                <li class="text-base leading-[1.6] flex gap-3">
+                                    <span class="text-example-yellow font-bold mt-1">•</span>
+                                    <p>Desarrollar material didáctico especializado basado en esta investigación</p>
+                                </li>
+                                <li class="text-base leading-[1.6] flex gap-3">
+                                    <span class="text-example-yellow font-bold mt-1">•</span>
+                                    <p>Promover la colaboración interinstitucional para investigación conjunta</p>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+            `;
+            
+            document.getElementById('conclusionPreview').innerHTML = conclusionHTML;
+        }
+
+        function generarBibliografia(tema) {
+            const bibliografiaHTML = `
+                <section class="mb-10">
+                    <h4 class="text-xs font-bold uppercase tracking-[0.3em] text-primary border-b-2 border-primary/10 pb-2 mb-6">Referencias Bibliográficas</h4>
+                    <div class="space-y-5 text-sm leading-[1.6]">
+                        <div class="pl-6 -indent-6 border-l-2 border-gray-200 py-2">
+                            <p class="font-bold text-gray-800">Referencias Fundamentales</p>
+                            <p class="text-gray-600 mt-1">Stewart, J. (2015). <em>Calculus: Early Transcendentals</em>. Cengage Learning.</p>
+                            <p class="text-gray-600">Apostol, T. M. (2013). <em>Calculus, Vol. 1</em>. Wiley.</p>
+                        </div>
+                        
+                        <div class="pl-6 -indent-6 border-l-2 border-gray-200 py-2">
+                            <p class="font-bold text-gray-800">Específicas del Tema</p>
+                            <p class="text-gray-600 mt-1">Goldstein, H., Poole, C., & Safko, J. (2002). <em>Classical Mechanics</em>. Addison-Wesley.</p>
+                            <p class="text-gray-600">Kreyszig, E. (2011). <em>Advanced Engineering Mathematics</em>. Wiley.</p>
+                        </div>
+                        
+                        <div class="pl-6 -indent-6 border-l-2 border-gray-200 py-2">
+                            <p class="font-bold text-gray-800">Contexto Nacional</p>
+                            <p class="text-gray-600 mt-1">Cárdenas, I. A. (2023). <em>Análisis Matemático de Sistemas Dinámicos</em>. Editorial UNAN León.</p>
+                            <p class="text-gray-600">Universidad Nacional Padre Gaspar García Laviana. (2022). <em>Revista de Investigación Científica, 15(2)</em>.</p>
+                        </div>
+                        
+                        <div class="pl-6 -indent-6 border-l-2 border-gray-200 py-2">
+                            <p class="font-bold text-gray-800">Recursos en Línea</p>
+                            <p class="text-gray-600 mt-1">arXiv.org - Repositorio de preprints en matemáticas y física</p>
+                            <p class="text-gray-600">MathSciNet - Base de datos de publicaciones matemáticas</p>
+                        </div>
+                    </div>
+                </section>
+                
+                <section>
+                    <h4 class="text-xs font-bold uppercase tracking-[0.3em] text-primary border-b-2 border-primary/10 pb-2 mb-6">Agradecimientos</h4>
+                    <p class="text-base leading-[1.8] text-justify italic text-gray-600">
+                        Agradezco a la Universidad Nacional Autónoma de Nicaragua, León (UNAN-León) por el apoyo institucional, y a la Universidad Nacional Padre Gaspar García Laviana por las facilidades otorgadas para el desarrollo de esta investigación. Un especial reconocimiento a los colegas investigadores cuyo trabajo ha servido de inspiración y base para este estudio.
+                    </p>
+                </section>
+            `;
+            
+            document.getElementById('bibliografiaPreview').innerHTML = bibliografiaHTML;
+        }
+
+        // Funciones de utilidad
+        function cambiarZoom(factor) {
+            zoomLevel *= factor;
+            zoomLevel = Math.max(0.5, Math.min(2, zoomLevel));
+            
+            const previewContainer = document.getElementById('previewContainer');
+            const zoomLevelDisplay = document.getElementById('zoomLevel');
+            
+            previewContainer.style.transform = `scale(${zoomLevel})`;
+            previewContainer.style.transformOrigin = 'top center';
+            zoomLevelDisplay.textContent = Math.round(zoomLevel * 100) + '%';
+            
+            mostrarNotificacion(`Zoom ajustado a ${Math.round(zoomLevel * 100)}%`, 'info');
+        }
+
+        function modoPantallaCompleta() {
+            const elem = document.documentElement;
+            if (!document.fullscreenElement) {
+                if (elem.requestFullscreen) {
+                    elem.requestFullscreen();
+                }
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+
+        function imprimirVistaPrevia() {
+            window.print();
+        }
+
+        function copiarContenido() {
+            const editor = document.getElementById('editorTexto');
+            navigator.clipboard.writeText(editor.value).then(() => {
+                mostrarNotificacion('Contenido copiado al portapapeles', 'success');
+            });
+        }
+
+        function limpiarContenido() {
+            if (confirm('¿Estás seguro de que deseas limpiar todo el contenido?')) {
+                document.getElementById('editorTexto').value = '';
+                actualizarVistaPrevia();
+                mostrarNotificacion('Contenido limpiado', 'info');
+            }
+        }
+
+        function guardarBorrador() {
+            const contenido = document.getElementById('editorTexto').value;
+            const tema = document.getElementById('temaInput').value;
+            
+            const borrador = {
+                tema: tema,
+                contenido: contenido,
+                fecha: new Date().toISOString(),
+                nivel: document.getElementById('nivelSelect').value
+            };
+            
+            localStorage.setItem('borrador_cientifico', JSON.stringify(borrador));
+            mostrarNotificacion('Borrador guardado localmente', 'success');
+        }
+
+        function cargarBorrador() {
+            const borrador = localStorage.getItem('borrador_cientifico');
+            if (borrador) {
+                const data = JSON.parse(borrador);
+                document.getElementById('temaInput').value = data.tema;
+                document.getElementById('editorTexto').value = data.contenido;
+                document.getElementById('nivelSelect').value = data.nivel;
+                actualizarVistaPrevia();
+                mostrarNotificacion('Borrador cargado', 'success');
+            } else {
+                mostrarNotificacion('No hay borradores guardados', 'info');
+            }
+        }
+
+        function mostrarNotificacion(mensaje, tipo) {
+            // Crear elemento de notificación
+            const notificacion = document.createElement('div');
+            notificacion.className = `fixed top-4 right-4 px-4 py-3 rounded-lg shadow-lg z-50 transform transition-all duration-300 translate-x-0 opacity-100 ${tipo === 'success' ? 'bg-green-500 text-white' : tipo === 'error' ? 'bg-red-500 text-white' : 'bg-blue-500 text-white'}`;
+            notificacion.innerHTML = `
+                <div class="flex items-center gap-3">
+                    <span class="material-symbols-outlined">
+                        ${tipo === 'success' ? 'check_circle' : tipo === 'error' ? 'error' : 'info'}
+                    </span>
+                    <span class="font-medium">${mensaje}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(notificacion);
+            
+            // Remover después de 3 segundos
+            setTimeout(() => {
+                notificacion.style.transform = 'translateX(100%)';
+                notificacion.style.opacity = '0';
+                setTimeout(() => {
+                    document.body.removeChild(notificacion);
+                }, 300);
+            }, 3000);
+        }
+
+        // Funciones de descarga (simuladas - en producción conectarías con backend)
+        function descargarWord() {
+            mostrarNotificacion('Generando documento Word...', 'info');
+            setTimeout(() => {
+                mostrarNotificacion('Documento Word listo para descargar', 'success');
+                // En producción, aquí se descargaría el archivo real
+            }, 1500);
+        }
+
+        function descargarLatex() {
+            mostrarNotificacion('Generando código LaTeX...', 'info');
+            setTimeout(() => {
+                mostrarNotificacion('Código LaTeX listo para descargar', 'success');
+                // En producción, aquí se descargaría el archivo .tex real
+            }, 1500);
+        }
+
+        function exportarPDF() {
+            mostrarNotificacion('Generando PDF...', 'info');
+            setTimeout(() => {
+                mostrarNotificacion('PDF generado correctamente', 'success');
+            }, 2000);
+        }
+
+        function mostrarConfiguracion() {
+            const configHTML = `
+                <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+                    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+                        <div class="p-6 border-b border-gray-200">
+                            <div class="flex items-center justify-between">
+                                <h3 class="text-xl font-bold text-gray-800">Configuración Avanzada</h3>
+                                <button onclick="cerrarConfiguracion()" class="p-2 hover:bg-gray-100 rounded-lg">
+                                    <span class="material-symbols-outlined">close</span>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="p-6 space-y-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Formato de Exportación</label>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <label class="flex items-center p-3 border border-gray-300 rounded-lg cursor-pointer hover:border-primary">
+                                        <input type="radio" name="exportFormat" checked class="mr-3">
+                                        <div>
+                                            <p class="font-medium">APA 7th Edition</p>
+                                            <p class="text-xs text-gray-500">Formato académico estándar</p>
+                                        </div>
+                                    </label>
+                                    <label class="flex items-center p-3 border border-gray-300 rounded-lg cursor-pointer hover:border-primary">
+                                        <input type="radio" name="exportFormat" class="mr-3">
+                                        <div>
+                                            <p class="font-medium">IEEE</p>
+                                            <p class="text-xs text-gray-500">Para ingeniería y tecnología</p>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Tamaño de Página</label>
+                                <select class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary focus:border-transparent">
+                                    <option>Letter (8.5" x 11")</option>
+                                    <option selected>A4 (210mm x 297mm)</option>
+                                    <option>Legal (8.5" x 14")</option>
+                                </select>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Márgenes</label>
+                                <div class="grid grid-cols-4 gap-3">
+                                    <input type="number" value="2.5" class="border border-gray-300 rounded-lg px-3 py-2 text-center" placeholder="Superior">
+                                    <input type="number" value="2.5" class="border border-gray-300 rounded-lg px-3 py-2 text-center" placeholder="Inferior">
+                                    <input type="number" value="3" class="border border-gray-300 rounded-lg px-3 py-2 text-center" placeholder="Izquierdo">
+                                    <input type="number" value="2.5" class="border border-gray-300 rounded-lg px-3 py-2 text-center" placeholder="Derecho">
+                                </div>
+                            </div>
+                            
+                            <div class="pt-6 border-t border-gray-200">
+                                <div class="flex justify-between">
+                                    <button onclick="cargarBorrador()" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50">
+                                        Cargar Borrador
+                                    </button>
+                                    <button onclick="cerrarConfiguracion()" class="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary/90">
+                                        Aplicar Configuración
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            const modal = document.createElement('div');
+            modal.innerHTML = configHTML;
+            document.body.appendChild(modal);
+        }
+
+        function cerrarConfiguracion() {
+            const modal = document.querySelector('.fixed.inset-0.bg-black');
+            if (modal) {
+                modal.remove();
+            }
+        }
+
+        // Cargar borrador guardado al cargar la página
+        window.onload = function() {
+            setTimeout(() => {
+                const borrador = localStorage.getItem('borrador_cientifico');
+                if (borrador) {
+                    if (confirm('¿Deseas cargar el último borrador guardado?')) {
+                        cargarBorrador();
+                    }
+                }
+            }, 1000);
+        };
+    </script>
+
+</body>
+</html>
